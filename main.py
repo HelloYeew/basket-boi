@@ -82,12 +82,17 @@ class Basket(Sprite):
             if self.x <= CANVAS_WIDTH - BASKET_MARGIN:
                 self.x += BASKET_SPEED
 
+        if self.x == CANVAS_WIDTH - BASKET_MARGIN:
+            self.x = 0 + BASKET_MARGIN
+        elif self.x == 0 + BASKET_MARGIN:
+            self.x = CANVAS_WIDTH - BASKET_MARGIN
+
     def check_collision(self, fruit):
         if self.distance_to(fruit) <= BASKET_CATCH_DISTANCE:
             fruit.to_be_deleted = True
             self.app.score += fruit.score
             self.app.update_score()
-        
+
 
 
 class BasketGame(GameApp):
@@ -98,6 +103,9 @@ class BasketGame(GameApp):
         self.score = 0
         self.score_text = Text(self, 'Score: 0', 100, 40)
         self.fruits = []
+
+    # def slowfruit(self,x):
+
 
     def update_score(self):
         self.score_text.set_text('Score: ' + str(self.score))
@@ -131,19 +139,11 @@ class BasketGame(GameApp):
             else:
                 new_list.append(e)
         return new_list
-    
-    def edge_collision(self, basket):
-        if basket.x == CANVAS_WIDTH:
-            basket.x = -CANVAS_WIDTH
-        elif basket.x == -CANVAS_WIDTH:
-            basket.x = CANVAS_WIDTH
 
     def post_update(self):
         self.process_collisions()
 
         self.random_fruits()
-        
-        self.edge_collision(self.basket)
         
         self.fruits = self.update_and_filter_deleted(self.fruits)
         
