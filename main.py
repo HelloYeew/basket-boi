@@ -10,7 +10,7 @@ from consts import *
 class SlowFruit(Sprite):
     def __init__(self, app, x, y):
         super().__init__(app, 'images/apple.png', x, y)
-
+        self.score = 1
         self.app = app
 
     def update(self):
@@ -23,7 +23,7 @@ class SlowFruit(Sprite):
 class FastFruit(Sprite):
     def __init__(self, app, x, y):
         super().__init__(app, 'images/banana.png', x, y)
-
+        self.score = 2
         self.app = app
 
     def update(self):
@@ -38,6 +38,7 @@ class SlideFruit(Sprite):
         super().__init__(app, 'images/cherry.png', x, y)
 
         self.app = app
+        self.score = 3
         self.direction = randint(0,1)*2 - 1
 
     def update(self):
@@ -53,6 +54,7 @@ class CurvyFruit(Sprite):
         super().__init__(app, 'images/pear.png', x, y)
 
         self.app = app
+        self.score = 3
         self.t = randint(0,360) * 2 * math.pi / 360
 
     def update(self):
@@ -75,6 +77,7 @@ class Basket(Sprite):
         if self.direction == BASKET_LEFT:
             if self.x >= BASKET_MARGIN:
                 self.x -= BASKET_SPEED
+
         elif self.direction == BASKET_RIGHT:
             if self.x <= CANVAS_WIDTH - BASKET_MARGIN:
                 self.x += BASKET_SPEED
@@ -82,8 +85,9 @@ class Basket(Sprite):
     def check_collision(self, fruit):
         if self.distance_to(fruit) <= BASKET_CATCH_DISTANCE:
             fruit.to_be_deleted = True
-            self.app.score += 1
+            self.app.score += fruit.score
             self.app.update_score()
+        
 
 
 class BasketGame(GameApp):
@@ -127,13 +131,22 @@ class BasketGame(GameApp):
             else:
                 new_list.append(e)
         return new_list
+    
+    def edge_collision(self, basket):
+        if basket.x == CANVAS_WIDTH:
+            basket.x = -CANVAS_WIDTH
+        elif basket.x == -CANVAS_WIDTH:
+            basket.x = CANVAS_WIDTH
 
     def post_update(self):
         self.process_collisions()
 
         self.random_fruits()
-
+        
+        self.edge_collision(self.basket)
+        
         self.fruits = self.update_and_filter_deleted(self.fruits)
+        
 
     def on_key_pressed(self, event):
         if event.keysym == 'Left':
