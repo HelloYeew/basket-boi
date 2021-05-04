@@ -104,24 +104,27 @@ class BasketGame(GameApp):
         self.score_text = Text(self, 'Score: 0', 100, 40)
         self.fruits = []
 
-    # def slowfruit(self,x):
-
 
     def update_score(self):
         self.score_text.set_text('Score: ' + str(self.score))
 
+    def fetch_fruit(self):
+        x = randint(50, CANVAS_WIDTH - 50)
+        p = random()
+        if p <= 0.3:
+            new_fruit = SlowFruit(self, x, 0)
+        elif p <= 0.6:
+            new_fruit = FastFruit(self, x, 0)
+        elif p <= 0.8:
+            new_fruit = SlideFruit(self, x, 0)
+        else:
+            new_fruit = CurvyFruit(self, x, 0)
+        return new_fruit
+
+
     def random_fruits(self):
         if random() > 0.95:
-            p = random()
-            x = randint(50, CANVAS_WIDTH - 50)
-            if p <= 0.3:
-                new_fruit = SlowFruit(self, x, 0)
-            elif p <= 0.6:
-                new_fruit = FastFruit(self, x, 0)
-            elif p <= 0.8:
-                new_fruit = SlideFruit(self, x, 0)
-            else:
-                new_fruit = CurvyFruit(self, x, 0)
+            new_fruit = self.fetch_fruit()
 
             self.fruits.append(new_fruit)
 
